@@ -1,0 +1,17 @@
+python-dotenv
+requests
+yt-dlp
+pandas
+pandas
+numpy
+matplotlib
+seaborn
+scikit-learn
+wordcloud
+librosa
+jupyterlab
+notebook
+tqdm
+python-dotenv
+scipy
+nltk
