@@ -218,6 +218,21 @@ class AudioDownloader:
         # Remove characters that are not allowed in filenames across common OS
         sanitized = re.sub(r'[<>:"/\\|?*]', '_', title) # Replace invalid characters with underscore
         sanitized = re.sub(r'\s+', ' ', sanitized).strip() # Replace multiple spaces with single space and strip leading/trailing
+        # remove spaces
+        sanitized = re.sub(r'\s+', '_', sanitized)
+        # remove "'"
+        sanitized = re.sub(r"'", "", sanitized)
+        # remove "!"
+        sanitized = re.sub(r"!", "", sanitized)
+        # remove "?"
+        sanitized = re.sub(r"\?", "", sanitized)
+        # remove ":"
+        sanitized = re.sub(r":", "", sanitized)
+        # remove ( or )
+        sanitized = re.sub(r"\(", "", sanitized)
+        sanitized = re.sub(r"\)", "", sanitized)
+        sanitized = re.sub(r" ", "_", sanitized)
+
         return sanitized
 
     # --- Modified download_audio based on your original working code ---
@@ -476,12 +491,14 @@ if not client_id or not client_secret:
     sys.exit(1)
 
 
-# Check if playlist link is provided as a command-line argument
-if len(sys.argv) != 2:
-    print("Usage: python your_script_name.py <playlist_link>")
-    sys.exit(1)
 
-playlist_link = sys.argv[1]
+playlist_link = os.getenv("PLAYLIST_LINK")
+if not playlist_link:
+    print("Error: Spotify PLAYLIST_LINK environment variable not set.")
+    print("Please create a .env file with this variable or set it in your environment.")
+    sys.exit(1)
+# Alternatively, you can hardcode the playlist link for testing
+# playlist_link = "https://open.spotify.com/playlist/your_playlist_id_here"
 
 # Create a SpotifyPlaylistProcessor instance
 processor = SpotifyPlaylistProcessor(client_id, client_secret, playlist_link)

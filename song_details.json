@@ -1,0 +1,142 @@
+[
+  {
+    "id": 1,
+    "spotify_song_name": "Just",
+    "spotify_artist_name": "Radiohead",
+    "youtube_title": "Radiohead - Just",
+    "file_path": "downloads/spoti-test/Radiohead_-_Just.mp3"
+  },
+  {
+    "id": 2,
+    "spotify_song_name": "Pretty Boy (feat. Lil Yachty)",
+    "spotify_artist_name": "Joji, Lil Yachty",
+    "youtube_title": "Joji, Lil Yachty - Pretty Boy (feat. Lil Yachty)",
+    "file_path": "downloads/spoti-test/Joji_Lil_Yachty_-_Pretty_Boy_(feat_Lil_Yachty).mp3"
+  },
+  {
+    "id": 3,
+    "spotify_song_name": "CAN'T GET OVER YOU (feat. Clams Casino)",
+    "spotify_artist_name": "Joji, Clams Casino",
+    "youtube_title": "Joji, Clams Casino - CAN'T GET OVER YOU (feat. Clams Casino)",
+    "file_path": "downloads/spoti-test/Joji_Clams_Casino_-_CANT_GET_OVER_YOU_(feat_Clams_Casino).mp3"
+  },
+  {
+    "id": 4,
+    "spotify_song_name": "Someday",
+    "spotify_artist_name": "The Strokes",
+    "youtube_title": "The Strokes - Someday",
+    "file_path": "downloads/spoti-test/The_Strokes_-_Someday.mp3"
+  },
+  {
+    "id": 5,
+    "spotify_song_name": "Sinatra - 2005 Remaster",
+    "spotify_artist_name": "Deftones",
+    "youtube_title": "Deftones - Sinatra - 2005 Remaster",
+    "file_path": "downloads/spoti-test/Deftones_-_Sinatra_-_2005_Remaster.mp3"
+  },
+  {
+    "id": 6,
+    "spotify_song_name": "Boys Don't Cry",
+    "spotify_artist_name": "The Cure",
+    "youtube_title": "The Cure - Boys Don't Cry",
+    "file_path": "downloads/spoti-test/The_Cure_-_Boys_Dont_Cry.mp3"
+  },
+  {
+    "id": 7,
+    "spotify_song_name": "Please Please Please Let Me Get What I Want - 2005 Remaster",
+    "spotify_artist_name": "Deftones",
+    "youtube_title": "Deftones - Please Please Please Let Me Get What I Want - 2005 Remaster",
+    "file_path": "downloads/spoti-test/Deftones_-_Please_Please_Please_Let_Me_Get_What_I_Want_-_2005_Remaster.mp3"
+  },
+  {
+    "id": 8,
+    "spotify_song_name": "WuShang Clan",
+    "spotify_artist_name": "Dank Rishu, Foosie Gang, Adil",
+    "youtube_title": "Dank Rishu, Foosie Gang, Adil - WuShang Clan",
+    "file_path": "downloads/spoti-test/Dank_Rishu_Foosie_Gang_Adil_-_WuShang_Clan.mp3"
+  },
+  {
+    "id": 9,
+    "spotify_song_name": "Last Nite",
+    "spotify_artist_name": "The Strokes",
+    "youtube_title": "The Strokes - Last Nite",
+    "file_path": "downloads/spoti-test/The_Strokes_-_Last_Nite.mp3"
+  },
+  {
+    "id": 10,
+    "spotify_song_name": "Dumb",
+    "spotify_artist_name": "Nirvana",
+    "youtube_title": "Nirvana - Dumb",
+    "file_path": "downloads/spoti-test/Nirvana_-_Dumb.mp3"
+  },
+  {
+    "id": 11,
+    "spotify_song_name": "This Charming Man - 2011 Remaster",
+    "spotify_artist_name": "The Smiths",
+    "youtube_title": "The Smiths - This Charming Man - 2011 Remaster",
+    "file_path": "downloads/spoti-test/The_Smiths_-_This_Charming_Man_-_2011_Remaster.mp3"
+  },
+  {
+    "id": 12,
+    "spotify_song_name": "About A Girl",
+    "spotify_artist_name": "Nirvana",
+    "youtube_title": "Nirvana - About A Girl",
+    "file_path": "downloads/spoti-test/Nirvana_-_About_A_Girl.mp3"
+  },
+  {
+    "id": 13,
+    "spotify_song_name": "All Apologies",
+    "spotify_artist_name": "Nirvana",
+    "youtube_title": "Nirvana - All Apologies",
+    "file_path": "downloads/spoti-test/Nirvana_-_All_Apologies.mp3"
+  },
+  {
+    "id": 14,
+    "spotify_song_name": "This Night Has Opened My Eyes - 2011 Remaster",
+    "spotify_artist_name": "The Smiths",
+    "youtube_title": "The Smiths - This Night Has Opened My Eyes - 2011 Remaster",
+    "file_path": "downloads/spoti-test/The_Smiths_-_This_Night_Has_Opened_My_Eyes_-_2011_Remaster.mp3"
+  },
+  {
+    "id": 15,
+    "spotify_song_name": "Karma Police",
+    "spotify_artist_name": "Radiohead",
+    "youtube_title": "Radiohead - Karma Police",
+    "file_path": "downloads/spoti-test/Radiohead_-_Karma_Police.mp3"
+  },
+  {
+    "id": 16,
+    "spotify_song_name": "The Adults Are Talking",
+    "spotify_artist_name": "The Strokes",
+    "youtube_title": "The Strokes - The Adults Are Talking",
+    "file_path": "downloads/spoti-test/The_Strokes_-_The_Adults_Are_Talking.mp3"
+  },
+  {
+    "id": 17,
+    "spotify_song_name": "Reptilia",
+    "spotify_artist_name": "The Strokes",
+    "youtube_title": "The Strokes - Reptilia",
+    "file_path": "downloads/spoti-test/The_Strokes_-_Reptilia.mp3"
+  },
+  {
+    "id": 18,
+    "spotify_song_name": "There Is a Light That Never Goes Out - 2011 Remaster",
+    "spotify_artist_name": "The Smiths",
+    "youtube_title": "The Smiths - There Is a Light That Never Goes Out - 2011 Remaster",
+    "file_path": "downloads/spoti-test/The_Smiths_-_There_Is_a_Light_That_Never_Goes_Out_-_2011_Remaster.mp3"
+  },
+  {
+    "id": 19,
+    "spotify_song_name": "High and Dry",
+    "spotify_artist_name": "Radiohead",
+    "youtube_title": "Radiohead - High and Dry",
+    "file_path": "downloads/spoti-test/Radiohead_-_High_and_Dry.mp3"
+  },
+  {
+    "id": 20,
+    "spotify_song_name": "Sextape",
+    "spotify_artist_name": "Deftones",
+    "youtube_title": "Deftones - Sextape",
+    "file_path": "downloads/spoti-test/Deftones_-_Sextape.mp3"
+  }
+]
