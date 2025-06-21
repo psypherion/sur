@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multimodal Music Engine</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .tab-btn.active {
+            border-color: #2dd4bf; /* teal-400 */
+            color: #2dd4bf;
+        }
+        .loader {
+            border: 4px solid #f3f3f3; /* Light grey */
+            border-top: 4px solid #3498db; /* Blue */
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-300 font-sans antialiased">
+    <div class="container mx-auto max-w-4xl p-4 sm:p-8">
+        
+        <header class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-white mb-2">🎵 Multimodal Music Engine</h1>
+            <p class="text-lg text-slate-400">Your AI Partner for Music Discovery & Creation</p>
+        </header>
+
+        <!-- Tabs -->
+        <div class="mb-6 border-b border-slate-700">
+            <nav class="flex space-x-4" aria-label="Tabs">
+                <button id="tab-ideagen" class="tab-btn active text-lg font-medium py-4 px-1 border-b-2 border-transparent hover:border-slate-500 transition-colors duration-200">Creative Ideation</button>
+                <button id="tab-recommender" class="tab-btn text-lg font-medium py-4 px-1 border-b-2 border-transparent hover:border-slate-500 transition-colors duration-200">Song Recommender</button>
+            </nav>
+        </div>
+
+        <!-- Tab Content -->
+        <main>
+            <!-- Ideation Generator Tab -->
+            <div id="content-ideagen">
+                <div class="bg-slate-800 p-6 rounded-lg shadow-lg">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="ideagen-genre" class="block text-sm font-medium text-slate-300 mb-1">Step 1: Select a Genre</label>
+                            <select id="ideagen-genre" class="w-full bg-slate-700 border border-slate-600 rounded-md py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-teal-500"></select>
+                        </div>
+                        <div>
+                            <label for="ideagen-mode" class="block text-sm font-medium text-slate-300 mb-1">Step 2: Choose Your Goal</label>
+                            <select id="ideagen-mode" class="w-full bg-slate-700 border border-slate-600 rounded-md py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-teal-500">
+                                <option value="inspire">Get Popular Theme Inspiration</option>
+                                <!-- More modes can be added here -->
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <button id="ideagen-submit" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded-md transition-colors duration-200">Generate Inspiration</button>
+                    </div>
+                </div>
+                <div id="ideagen-loader" class="hidden flex justify-center mt-8"><div class="loader"></div></div>
+                <div id="ideagen-results" class="mt-8"></div>
+            </div>
+
+            <!-- Song Recommender Tab -->
+            <div id="content-recommender" class="hidden">
+                <div class="bg-slate-800 p-6 rounded-lg shadow-lg">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="rec-song-title" class="block text-sm font-medium text-slate-300 mb-1">Step 1: Enter a Song Title</label>
+                            <input type="text" id="rec-song-title" placeholder="e.g., Thunderstruck" class="w-full bg-slate-700 border border-slate-600 rounded-md py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-teal-500">
+                        </div>
+                        <div>
+                            <label for="rec-mode" class="block text-sm font-medium text-slate-300 mb-1">Step 2: Select Recommendation Mode</label>
+                            <select id="rec-mode" class="w-full bg-slate-700 border border-slate-600 rounded-md py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-teal-500">
+                                <option value="balanced">Balanced (Default)</option>
+                                <option value="audio_focus">Audio Focus</option>
+                                <option value="lyric_focus">Lyric Focus</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <button id="rec-submit" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded-md transition-colors duration-200">Get Recommendations</button>
+                    </div>
+                </div>
+                <div id="rec-loader" class="hidden flex justify-center mt-8"><div class="loader"></div></div>
+                <div id="rec-results" class="mt-8"></div>
+            </div>
+        </main>
+    </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // --- State & Elements ---
+    const tabIdeagen = document.getElementById('tab-ideagen');
+    const tabRecommender = document.getElementById('tab-recommender');
+    const contentIdeagen = document.getElementById('content-ideagen');
+    const contentRecommender = document.getElementById('content-recommender');
+    
+    const ideagenGenreSelect = document.getElementById('ideagen-genre');
+    const ideagenSubmitBtn = document.getElementById('ideagen-submit');
+    const ideagenResultsDiv = document.getElementById('ideagen-results');
+    const ideagenLoader = document.getElementById('ideagen-loader');
+
+    const recSongTitleInput = document.getElementById('rec-song-title');
+    const recModeSelect = document.getElementById('rec-mode');
+    const recSubmitBtn = document.getElementById('rec-submit');
+    const recResultsDiv = document.getElementById('rec-results');
+    const recLoader = document.getElementById('rec-loader');
+
+    // --- Initial Setup ---
+    // Fetch genres and populate dropdowns
+    fetch('/api/genres')
+        .then(response => response.json())
+        .then(data => {
+            const genres = data.genres;
+            ideagenGenreSelect.innerHTML = '<option value="">All Genres</option>';
+            genres.forEach(genre => {
+                const option = document.createElement('option');
+                option.value = genre;
+                option.textContent = genre;
+                ideagenGenreSelect.appendChild(option);
+            });
+        });
+
+    // --- Event Listeners ---
+    // Tab switching
+    tabIdeagen.addEventListener('click', () => switchTab('ideagen'));
+    tabRecommender.addEventListener('click', () => switchTab('recommender'));
+
+    // Button clicks
+    ideagenSubmitBtn.addEventListener('click', handleIdeationRequest);
+    recSubmitBtn.addEventListener('click', handleRecommenderRequest);
+
+    // --- Functions ---
+    function switchTab(tabName) {
+        if (tabName === 'ideagen') {
+            tabIdeagen.classList.add('active');
+            tabRecommender.classList.remove('active');
+            contentIdeagen.classList.remove('hidden');
+            contentRecommender.classList.add('hidden');
+        } else {
+            tabIdeagen.classList.remove('active');
+            tabRecommender.classList.add('active');
+            contentIdeagen.classList.add('hidden');
+            contentRecommender.classList.remove('hidden');
+        }
+    }
+
+    async function handleIdeationRequest() {
+        const genre = ideagenGenreSelect.value;
+        
+        ideagenResultsDiv.innerHTML = '';
+        ideagenLoader.classList.remove('hidden');
+
+        try {
+            const response = await fetch('/api/ideagen/inspire', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ genre: genre || null })
+            });
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            const data = await response.json();
+            renderInspirationResults(data);
+        } catch (error) {
+            ideagenResultsDiv.innerHTML = `<p class="text-red-400 text-center">An error occurred: ${error.message}</p>`;
+        } finally {
+            ideagenLoader.classList.add('hidden');
+        }
+    }
+    
+    async function handleRecommenderRequest() {
+        const title = recSongTitleInput.value;
+        const mode = recModeSelect.value;
+        if (!title.trim()) {
+            alert('Please enter a song title.');
+            return;
+        }
+
+        recResultsDiv.innerHTML = '';
+        recLoader.classList.remove('hidden');
+
+        try {
+            const response = await fetch('/api/recommend', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ title, mode })
+            });
+            if (!response.ok) {
+                 const errorData = await response.json();
+                 throw new Error(errorData.detail || `HTTP error! status: ${response.status}`);
+            }
+            const data = await response.json();
+            renderRecommenderResults(data);
+        } catch (error) {
+            recResultsDiv.innerHTML = `<p class="text-red-400 text-center">An error occurred: ${error.message}</p>`;
+        } finally {
+            recLoader.classList.add('hidden');
+        }
+    }
+
+    function renderInspirationResults(data) {
+        if (!data.inspirations || data.inspirations.length === 0) {
+            ideagenResultsDiv.innerHTML = '<p class="text-center text-slate-400">Could not find popular songs for this genre.</p>';
+            return;
+        }
+        
+        let html = `
+            <div class="space-y-4">
+                <h2 class="text-2xl font-bold text-white text-center">Lyrical Theme Inspiration</h2>
+                <p class="text-center text-slate-400 mb-6">Here are themes from the most popular songs in your selected genre.</p>
+        `;
+
+        data.inspirations.forEach(song => {
+            html += `
+                <div class="bg-slate-800 p-4 rounded-lg border border-slate-700">
+                    <h3 class="font-bold text-lg text-teal-400">'${song.title}' by ${song.artist}</h3>
+                    <p class="text-sm text-slate-400 mb-2">Popularity: ${song.popularity}</p>
+                    <p class="text-slate-300"><strong class="font-semibold text-white">Theme:</strong> ${song.theme}</p>
+                </div>
+            `;
+        });
+        html += `</div>`;
+        ideagenResultsDiv.innerHTML = html;
+    }
+
+    function renderRecommenderResults(data) {
+        if (!data.recommendations || data.recommendations.length === 0) {
+            recResultsDiv.innerHTML = '<p class="text-center text-slate-400">Could not generate recommendations.</p>';
+            return;
+        }
+        
+        let html = `
+            <div class="space-y-4">
+                <h2 class="text-2xl font-bold text-white text-center">Top Recommendations for '${data.seed_song_title}'</h2>
+        `;
+        
+        data.recommendations.forEach(rec => {
+            // Sanitize explanation for HTML display
+            const explanationHtml = rec.explanation.replace(/\n/g, '<br>').replace(/\s{2,}/g, '  ');
+            html += `
+                <div class="bg-slate-800 p-4 rounded-lg border border-slate-700">
+                    <h3 class="font-bold text-lg text-teal-400">'${rec.title}' by ${rec.artist}</h3>
+                    <p class="text-sm text-slate-400 mb-2">Genre: ${rec.genre}</p>
+                    <div class="text-sm text-slate-300">${explanationHtml}</div>
+                </div>
+            `;
+        });
+        html += `</div>`;
+        recResultsDiv.innerHTML = html;
+    }
+});
+</script>
+
+</body>
+</html>
