@@ -31,3 +31,22 @@ List of genres (over 1,400) each with 200 songs, including genre/sub-genre, trac
      -     main genre
      -     sub-genres (with popularity count, which could be interpreted as weight of the sub-genre)
      -     tags (every label that is not some existing genre, usually emotions, "My top 10 favourite tracs" etc.; also with popularity count)
+
+
+# voltraco/genres
+
+
+ - Two lists of genres.
+
+### `genres.json`
+An array of 1652 genres (counted with `jq '.[]' < genres.json | wc -l`)
+
+### `categorized-subset.json`
+A more general subset of the genres list organized into a hierarchy.
+
+```
+The data contained in this repository was derived from the following sources
+
+ - https://en.wikipedia.org/wiki/List_of_music_styles
+ - https://en.wikipedia.org/wiki/List_of_popular_music_genres
+```

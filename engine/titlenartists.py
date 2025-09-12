@@ -35,3 +35,4 @@ if __name__ == "__main__":
     pairs = extractor.title_artist_pairs()
     for artist, title in pairs:
         print(f"Artist: {artist}, Title: {title}")
+    
