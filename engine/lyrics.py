@@ -17,7 +17,7 @@ class LyricsFetcher:
         self.genius = lyricsgenius.Genius(
             access_token,
             skip_non_songs=True,
-            excluded_terms=["(Remix)", "(Live)"],
+            excluded_terms=["(Remix)", "(Live)", "(Acoustic)", "(Instrumental)", "(Cover)"],
             remove_section_headers=True,
             timeout=15
         )
