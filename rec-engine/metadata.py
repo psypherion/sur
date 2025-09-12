@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 # Load environment variables from .env file
 load_dotenv()
 # --- Configuration ---
-INPUT_PLAYLIST_URL = os.getenv("PLAYLIST_LINK") # Example: Spotify "lofi beats"
+INPUT_PLAYLIST_URL = os.getenv("PLAYLIST_LINK") 
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')

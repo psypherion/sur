@@ -1,0 +1,15 @@
+requests
+playwright
+playwright-stealth
+torch
+numpy
+pandas
+scikit-learn
+tqdm
+python-dotenv
+sentence-transformers
+transformers
+joblib
+librosa
+pydub
+lyricsgenius
