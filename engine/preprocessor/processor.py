@@ -55,7 +55,7 @@ class DataPreprocessor:
 
     def remove_duplicates(self, songs: List[Dict[str, str]]) -> List[Dict[str, str]]:
         """Remove duplicate songs based on artist, title, and spotify_id."""
-        unique_songs = { (song['title']): song for song in songs }
+        unique_songs = { (song['title'], song['artist']): song for song in songs }
         return list(unique_songs.values())
     
 if __name__ == "__main__":
