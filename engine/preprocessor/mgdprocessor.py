@@ -122,8 +122,6 @@ class MGDHitsProcessor(MGDProcessor):
                         "speechiness": row.get("speechiness", ""),
                         "tempo": row.get("tempo", ""),
                         "valence": row.get("valence", ""),
-                        "duration_ms": row.get("duration_ms", ""),
-                        "time_signature": row.get("time_signature", ""),
                         "key": row.get("key", ""),
                         "mode": row.get("mode", "")
                     }

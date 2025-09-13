@@ -50,3 +50,19 @@ The data contained in this repository was derived from the following sources
  - https://en.wikipedia.org/wiki/List_of_music_styles
  - https://en.wikipedia.org/wiki/List_of_popular_music_genres
 ```
+
+# Spotify Dataset 1921-2020, 600k+ Tracks
+
+Includes audio features such as:
+
+acousticness, danceability, duration_ms, energy, instrumentalness, key, liveness, loudness, mode, speechiness, tempo, valence, and more.
+
+Contains track metadata:
+
+track_id (Spotify ID), track name, artist, album, release date, popularity, genre, etc.
+
+Useful for:
+
+Large-scale audio feature extraction, training ML models (popularity prediction, genre classification), and data science/analytics projects.
+
+Source: [Kaggle: Spotify Dataset 1921-2020, 600k+ Tracks](https://www.kaggle.com/datasets/yamaerenay/spotify-dataset-19212020-600k-tracks)

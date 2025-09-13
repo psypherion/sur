@@ -13,3 +13,6 @@ joblib
 librosa
 pydub
 lyricsgenius
+umap-learn
+matplotlib
+seaborn
