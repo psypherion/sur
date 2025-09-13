@@ -16,3 +16,4 @@ lyricsgenius
 umap-learn
 matplotlib
 seaborn
+mpl-tools
