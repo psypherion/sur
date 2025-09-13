@@ -14,12 +14,17 @@ from sklearn.metrics import silhouette_score, calinski_harabasz_score, davies_bo
 import seaborn as sns
 from sklearn.cluster import KMeans
 import warnings
+
 warnings.filterwarnings("ignore", category=RuntimeWarning)
 
 load_dotenv()
 
 class _GTZANLoader:
     def __init__(self) -> None:
+        """
+        Loads and preprocesses the GTZAN dataset from a CSV file.
+        Expects the CSV path and manifold directory to be set in environment variables.
+        """
         self.GTZAN_CSV = os.getenv("GTZAN_CSV")
         self.MANIFOLD_DIR = os.getenv("MANIFOLD_DIR")
         if not self.MANIFOLD_DIR:
@@ -47,6 +52,17 @@ class _GTZANLoader:
 class GTZANManifold:
     def __init__(self, n_components: int, model_name: str, 
                  n_neighbors=10, min_dist=0.1):
+        """
+        Initializes the GTZANManifold with UMAP parameters.
+        Args:
+            n_components (int): Number of dimensions for UMAP embedding (2, 3, or higher).
+            model_name (str): Name to save the UMAP model and embeddings.
+            n_neighbors (int): UMAP n_neighbors parameter.
+            min_dist (float): UMAP min_dist parameter.
+        Raises:
+            ValueError: If n_components is less than 2.
+            TypeError: If any parameter is of the wrong type.
+        """
         self.loader = _GTZANLoader()
         self.manifold_dir = self.loader.manifold_dir
         self.n_components = n_components
@@ -57,7 +73,14 @@ class GTZANManifold:
         self.embedding = None
 
     def fit(self):
-        print(f"Fitting UMAP ({self.n_components}D) manifold [n_neighbors={self.n_neighbors}, min_dist={self.min_dist}]: this may take a few moments...")
+        """Fits the UMAP model to the GTZAN features.
+        Raises:
+            ValueError: If n_components is less than 2.
+            TypeError: If any parameter is of the wrong type.
+        """
+        print(f"Fitting UMAP ({self.n_components}D) manifold [n_neighbors={self.n_neighbors}, "
+              f"min_dist={self.min_dist}]: this may take a few moments...")
+        
         with tqdm(total=1, desc=f"UMAP {self.n_components}D") as pbar:
             self.umap_model = umap.UMAP(
                 n_components=self.n_components, 
@@ -68,14 +91,29 @@ class GTZANManifold:
             pbar.update(1)
 
     def save(self):
+        """Saves the UMAP model and embeddings to disk."""
+
         joblib.dump(self.umap_model, os.path.join(self.manifold_dir, f"{self.model_name}.pkl"))
         col_names = [f"UMAP_{i+1}" for i in range(self.n_components)]
         emb_df = pd.DataFrame(np.array(self.embedding), columns=col_names)
         emb_df['label_id'] = self.loader.encoded_labels
         emb_df['label'] = self.loader.labels.values
-        emb_df.to_csv(os.path.join(self.manifold_dir, f"{self.model_name}_embedding.csv"), index=False)
+        emb_df.to_csv(os.path.join(self.manifold_dir, 
+                                   f"{self.model_name}_embedding.csv"), 
+                                   index=False)
 
 def plot_umap_2d(embedding, labels, label_encoder, out_path=None):
+    """
+    Plots a 2D UMAP embedding with genre labels.
+    Args:
+        embedding (np.ndarray): The 2D UMAP embedding.
+        labels (np.ndarray): The true labels for each data point.
+        label_encoder (LabelEncoder): The label encoder used to encode the labels.
+        out_path (str, optional): Path to save the plot image. If None, 
+        the plot is shown but not saved.
+    Returns:
+        None
+    """
     plt.figure(figsize=(10,7))
     cmap = plt.get_cmap('tab10', len(label_encoder.classes_))
     for idx, genre in enumerate(label_encoder.classes_):
@@ -93,7 +131,20 @@ def plot_umap_2d(embedding, labels, label_encoder, out_path=None):
         plt.savefig(out_path)
     plt.show()
 
-def plot_umap_3d(embedding, labels, label_encoder, interactive=True, out_path=None, animate_path=None):
+def plot_umap_3d(embedding, labels, label_encoder, interactive=True, 
+                 out_path=None, animate_path=None):
+    """
+    Plots a 3D UMAP embedding with genre labels.
+    Args:
+        embedding (np.ndarray): The 3D UMAP embedding.
+        labels (np.ndarray): The true labels for each data point.
+        label_encoder (LabelEncoder): The label encoder used to encode the labels.
+        interactive (bool): If True, shows an interactive plot window.
+        out_path (str, optional): Path to save the static plot image. If None, 
+        the static plot is not saved.
+        animate_path (str, optional): Path to save the animated rotating plot as a GIF. If None, the animation is not saved.
+    Returns:
+        None"""
     fig = plt.figure(figsize=(12, 9))
     ax = fig.add_subplot(111, projection='3d')
     cmap = plt.get_cmap('tab10', len(label_encoder.classes_))
@@ -117,32 +168,66 @@ def plot_umap_3d(embedding, labels, label_encoder, interactive=True, out_path=No
         def rotate(angle):
             ax.view_init(elev=20, azim=angle)
             return fig.axes
-        rot_animation = animation.FuncAnimation(fig, rotate, frames=np.arange(0, 360, 2), interval=50)
+        rot_animation = animation.FuncAnimation(fig, rotate, 
+                                                frames=np.arange(0, 360, 2), 
+                                                interval=50)
         rot_animation.save(animate_path, dpi=80, writer='pillow')
         print(f"Saved animation to {animate_path}")
 
 def cluster_purity(embedding, labels, n_neighbors=10):
+    """
+    Computes the cluster purity of the embedding.
+    Args:
+        embedding (np.ndarray): The UMAP embedding.
+        labels (np.ndarray): The true labels for each data point.
+        n_neighbors (int): The number of neighbors to consider.
+    Returns:
+        float: The cluster purity score.
+    """
     nn = NearestNeighbors(n_neighbors=n_neighbors+1).fit(embedding)
     distances, indices = nn.kneighbors(embedding)
     correct = 0
     for i in range(len(embedding)):
-        neigh_labels = labels[indices[i][1:]]  # Exclude self
+        neigh_labels = labels[indices[i][1:]]  
         main_label = labels[i]
         correct += np.sum(neigh_labels == main_label) / n_neighbors
     return correct / len(embedding)
 
 def genre_neighbor_matrix(embedding, labels, label_encoder, n_neighbors=10):
+    """Create a genre neighbor matrix showing how often genres appear in 
+    each other's neighborhoods.
+    Args:
+        embedding (np.ndarray): The data points in the embedded space.
+        labels (np.ndarray): The true labels for each data point.
+        label_encoder (LabelEncoder): The label encoder used to encode the labels.
+        n_neighbors (int): Number of neighbors to consider.
+    Returns:
+        pd.DataFrame: A DataFrame representing the genre neighbor matrix.
+    """
     nn = NearestNeighbors(n_neighbors=n_neighbors+1).fit(embedding)
     _, indices = nn.kneighbors(embedding)
-    matrix = np.zeros((len(label_encoder.classes_), len(label_encoder.classes_)), dtype=int)
+    matrix = np.zeros((len(label_encoder.classes_), len(label_encoder.classes_)), 
+                      dtype=int)
     for i in range(len(embedding)):
         genre = labels[i]
-        for j in indices[i][1:]:  # exclude self
+        for j in indices[i][1:]:  
             matrix[genre, labels[j]] += 1
-    df = pd.DataFrame(matrix, index=label_encoder.classes_, columns=label_encoder.classes_)
+    df = pd.DataFrame(matrix, index=label_encoder.classes_, 
+                      columns=label_encoder.classes_)
     return df
 
-def worst_purity_samples(embedding, labels, label_encoder, n_neighbors=10, n_to_show=10):
+def worst_purity_samples(embedding, labels, label_encoder, 
+                         n_neighbors=10, n_to_show=10):
+    """Identify and print the samples with the worst local cluster purity.
+    Args:
+        embedding (np.ndarray): The data points in the embedded space.
+        labels (np.ndarray): The true labels for each data point.
+        label_encoder (LabelEncoder): The label encoder used to encode the labels.
+        n_neighbors (int): Number of neighbors to consider for purity calculation.
+        n_to_show (int): Number of worst samples to display.
+    Returns:
+        None
+    """
     nn = NearestNeighbors(n_neighbors=n_neighbors+1).fit(embedding)
     _, indices = nn.kneighbors(embedding)
     purities = []
@@ -153,26 +238,41 @@ def worst_purity_samples(embedding, labels, label_encoder, n_neighbors=10, n_to_
     print("="*60)
     print(f"Worst {n_to_show} tracks by local purity (k={n_neighbors}):")
     for idx in worst:
-        print(f"Track #{idx}: Genre={label_encoder.inverse_transform([labels[idx]])[0]}, Neighbor purity={purities[idx]:.2f}")
+        print(f"Track #{idx}: Genre={label_encoder.inverse_transform([labels[idx]])[0]}, "
+              f"Neighbor purity={purities[idx]:.2f}")
 
 if __name__ == "__main__":
     out_dir = os.path.join(os.getcwd(), "engine", "manifold", "audio_manifold")
     print("Preparing GTZAN data...")
     loader = _GTZANLoader()
 
-    # -- 2D/3D UMAP (remove or keep as needed) --
-    vis2d = GTZANManifold(n_components=2, model_name="gtzan_umap_vis_2d", n_neighbors=10, min_dist=0.1)
-    vis2d.fit(); vis2d.save()
+    # -- 2D UMAP --
+    vis2d = GTZANManifold(n_components=2, model_name="gtzan_umap_vis_2d", 
+                          n_neighbors=10, min_dist=0.1)
+    vis2d.fit() 
+    vis2d.save()
     print("2D UMAP for visualization (n_neighbors=10, min_dist=0.1) saved.")
-    plot_umap_2d(vis2d.embedding, loader.encoded_labels, loader.label_encoder, out_path=os.path.join(out_dir, "gtzan_umap_2d.png"))
-    vis3d = GTZANManifold(n_components=3, model_name="gtzan_umap_vis_3d", n_neighbors=10, min_dist=0.1)
-    vis3d.fit(); vis3d.save()
+    plot_umap_2d(vis2d.embedding, loader.encoded_labels, loader.label_encoder, 
+                 out_path=os.path.join(out_dir, "gtzan_umap_2d.png"))
+    
+    # -- 3D UMAP --
+    vis3d = GTZANManifold(n_components=3, model_name="gtzan_umap_vis_3d", 
+                          n_neighbors=10, min_dist=0.1)
+    vis3d.fit()
+    vis3d.save()
+
     print("3D UMAP for visualization (n_neighbors=10, min_dist=0.1) saved.")
-    plot_umap_3d(vis3d.embedding, loader.encoded_labels, loader.label_encoder, interactive=True, out_path=os.path.join(out_dir, "gtzan_umap_3d.png"), animate_path=os.path.join(out_dir, "gtzan_umap_3d.gif"))
+    plot_umap_3d(vis3d.embedding, loader.encoded_labels, loader.label_encoder,
+                 interactive=True, out_path=os.path.join(out_dir,
+                                                         "gtzan_umap_3d.png"),
+                 animate_path=os.path.join(out_dir,
+                                           "gtzan_umap_3d.gif"))
 
     # -- 10D UMAP full diagnosis --
     print("\n--- 10D UMAP manifold + cluster metrics ---")
-    highdim = GTZANManifold(n_components=10, model_name="gtzan_umap_10d", n_neighbors=10, min_dist=0.1)
+    highdim = GTZANManifold(n_components=10, 
+                            model_name="gtzan_umap_10d", n_neighbors=10, 
+                            min_dist=0.1)
     highdim.fit(); highdim.save()
     embedding = np.array(highdim.embedding)
 
@@ -193,7 +293,8 @@ if __name__ == "__main__":
     purity = cluster_purity(embedding, labels, n_neighbors=10)
     print(f"Average local cluster purity (k=10): {purity:.3f}")
 
-    genre_matrix = genre_neighbor_matrix(embedding, labels, label_encoder, n_neighbors=10)
+    genre_matrix = genre_neighbor_matrix(embedding, labels, 
+                                         label_encoder, n_neighbors=10)
     print("Genre neighbor matrix (k=10):")
     print(genre_matrix)
     plt.figure(figsize=(10,8))
@@ -211,4 +312,5 @@ if __name__ == "__main__":
     print(f"KMeans cluster ARI vs. true genres: {ari:.3f}")
 
     # Show "worst" points by local cluster purity
-    worst_purity_samples(embedding, labels, label_encoder, n_neighbors=10, n_to_show=10)
+    worst_purity_samples(embedding, labels, label_encoder, 
+                         n_neighbors=10, n_to_show=10)
